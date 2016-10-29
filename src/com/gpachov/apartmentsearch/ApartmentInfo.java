@@ -51,6 +51,9 @@ public class ApartmentInfo {
             locationScores.put("unknown", 0.5f);
             locationScores.put("надежда 2", 0.5f);
             locationScores.put("люлин 6", 0.4f);
+            locationScores.put("люлин 5", 0.4f);
+            locationScores.put("люлин 3", 0.4f);
+            locationScores.put("надежда 4", 0.4f);
             locationScores.put("център", 0.8f);
             locationScores.put("славия", 0.5f);
             locationScores.put("княжево", 0.3f);
@@ -88,6 +91,13 @@ public class ApartmentInfo {
             locationScores.put("дружба 2", 0.575f);
             locationScores.put("надежда 1", 0.4f);
             locationScores.put("надежда 3", 0.4f);
+            locationScores.put("сухата река", 0.7f);
+            locationScores.put("красна поляна 1", 0.7f);
+            locationScores.put("красна поляна 2", 0.8f);
+            locationScores.put("красна поляна 3", 0.8f);
+            locationScores.put("младост 3", 0.7f);
+            locationScores.put("младост 4", 0.65f);
+            locationScores.put("захарна фабрика", 0.3f);
         }
     }
 
@@ -127,7 +137,7 @@ public class ApartmentInfo {
         } else {
             setLocationScore(locationScore);
         }
-        float formulaScore = (pricePerSqmNormalized + floorCoefficient + yearCoefficient + priceCoefficient*5 + this.locationScore) / 2*5.0f;
+        float formulaScore = (pricePerSqmNormalized + floorCoefficient + yearCoefficient + priceCoefficient + this.locationScore) / 5.0f;
 
         setFormulaScore(formulaScore);
 
@@ -194,5 +204,10 @@ public class ApartmentInfo {
 
     public void setLocationScore(float locationScore) {
         this.locationScore = locationScore;
+    }
+
+
+    public Apartment getApartment() {
+        return apartment;
     }
 }

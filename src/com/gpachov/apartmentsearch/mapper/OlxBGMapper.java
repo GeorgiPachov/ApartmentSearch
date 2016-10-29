@@ -11,122 +11,58 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import static com.gpachov.apartmentsearch.mapper.Utils.regexSearch;
+
 /**
  * Created by georgi.pachov on 27/09/2016.
  */
-public class OlxBGMapper implements ApartmentMapper{
+public class OlxBGMapper implements ApartmentMapper {
 
-    private static final String WOULD_LIVE_IN = "https://www.olx.bg/nedvizhimi-imoti/prodazhbi/apartamenti/oblast-sofiya-grad/?search[filter_float_price%3Ato]=65000&search[filter_enum_atype][0]=2&search[filter_enum_atype][1]=3&search[filter_float_space%3Afrom]=40&search[filter_float_space%3Ato]=100&search[filter_float_cyear%3Afrom]=1990&search[filter_enum_ctype][0]=tuhla&search[filter_enum_nlf][0]=1&search[filter_enum_furn][0]=poluobzaveden&search[filter_enum_cstate][0]=2&search[photos]=1&search[description]=1";
+    private static final String ALL = "https://www.olx.bg/nedvizhimi-imoti/prodazhbi/apartamenti/oblast-sofiya-grad/?search[filter_float_price%3Ato]=65000&search[filter_enum_atype][0]=2&search[filter_enum_atype][1]=3&search[filter_float_space%3Afrom]=40&search[filter_float_space%3Ato]=100&search[filter_float_cyear%3Afrom]=1990&search[filter_enum_ctype][0]=tuhla&search[filter_enum_nlf][0]=1&search[filter_enum_furn][0]=poluobzaveden&search[filter_enum_cstate][0]=2&search[photos]=1&search[description]=1";
+    private Set<String> visitedLinks = new HashSet<>();
 
-    public ApartmentInfo process(String link) throws IOException {
-        String content = getContentUtf8(link);
-        Apartment apartment = mapToApartment(content);
-        apartment.setLink(link);
-
-        ApartmentInfo info = new ApartmentInfo(apartment);
-        return info;
-    }
-
-    private String getContent(String link) throws IOException {
-        return Request.Get(link).execute().returnContent().asString(Charset.forName("Windows-1251"));
-    }
-
-    private String getContentUtf8(String link) throws IOException {
-        return Request.Get(link).execute().returnContent().asString();
-    }
-
-    public Apartment mapToApartment(String content) {
-        Apartment apartment = new Apartment();
-        float livingArea = findLivingArea(content);
-        apartment.setLivingArea(livingArea);
-
-        float price = findPrice(content);
-        apartment.setPrice(price);
-
-        int floor = findFloor(content);
-        apartment.setFloor(floor);
-
-        int year = findYear(content);
-        apartment.setYear(year);
-
-        String locatedIn = findLocatedIn(content);
-        apartment.setLocatedIn(locatedIn);
-
-        return apartment;
-    }
 
     public String findLocatedIn(String content) {
-//        "Овча купел 1, гр. София, Област София-град";
-        Pattern pattern = Pattern.compile("([\\p{InCYRILLIC}\\s\\d]{3,32}),\\s\\p{InCYRILLIC}{2}\\.\\s\\p{InCYRILLIC}{5}[\\s\\.,]");
-        Matcher matcher = pattern.matcher(content);
-        while (matcher.find()) {
-            String locatedIn = matcher.group(1);
-            return locatedIn.trim().toLowerCase();
-        }
-        return "unknown";
+        String regex = "([\\p{InCYRILLIC}\\s\\d]{3,32}),\\s\\p{InCYRILLIC}{2}\\.\\s\\p{InCYRILLIC}{5}[\\s\\.,]";
+        return regexSearch(regex, 1, content);
     }
+
 
     public static void main(String[] args) throws IOException {
         OlxBGMapper mapper = new OlxBGMapper();
-//        String content = mapper.getContentUtf8("https://www.olx.bg/ad/slaviya-dvustaen-tuhla-59000e-ID6bO14.html#95f961f1c6");
-//        int floor = mapper.findFloor(content);
-//        System.out.println(floor);
         List<ApartmentInfo> sortedInfos = mapper.get();
         sortedInfos.forEach(System.out::println);
     }
 
     public int findYear(String content) {
-        Pattern pattern = Pattern.compile("(\\d{4})\\s{0,3}\\p{InCYRILLIC}{1}\\s{0,3}\\.");
-        Matcher matcher = pattern.matcher(content);
-        while (matcher.find()) {
-            String year = matcher.group(1);
-            Integer yearI = Integer.valueOf(year);
-            return yearI;
-        }
-
-        return -1;
+        String regex = "(\\d{4})\\s{0,3}\\p{InCYRILLIC}{1}\\s{0,3}\\.";
+        return toInt((regexSearch(regex, 1, content)));
     }
 
     public int findFloor(String content) {
-        Pattern pattern = Pattern.compile("\\d-\\p{InCYRILLIC}{2}");
-        Matcher matcher = pattern.matcher(content);
-        while (matcher.find()) {
-            String floor = matcher.group(0).replaceAll("\\D", "");
-            Integer floorF = Integer.valueOf(floor);
-            return floorF;
+        String regex = "\\d-\\p{InCYRILLIC}{2}";
+        int result = toInt(regexSearch(regex, 0, content).replaceAll("\\D", ""));
+        if (result > -1) {
+            return result;
         }
+        regex = "[Е|е]т.{0,10}(\\d{1,2})";
+        return toInt(regexSearch(regex, 1, content).replaceAll("\\D", ""));
 
-        Pattern pattern2 = Pattern.compile("[Е|е]т.{0,10}(\\d{1,2})");
-        Matcher matcher2 = pattern2.matcher(content);
-        while (matcher2.find()) {
-            String floor = matcher2.group(1);
-            Integer floorF = Integer.valueOf(floor);
-            return floorF;
-        }
+    }
 
-        return -1;
+    @Override
+    public String getURL() {
+        return ALL;
     }
 
     public float findPrice(String content) {
-        Pattern pattern = Pattern.compile("(\\d{4,5})\\s{0,2}€");
-        Matcher matcher = pattern.matcher(content);
-        while (matcher.find()) {
-            String price = matcher.group(1);
-            float priceF = Float.valueOf(price);
-            return priceF;
-        }
-        return -1.0f;
+        String regex = "(\\d{4,5})\\s{0,2}€";
+        return toFloat(regexSearch(regex, 1, content));
     }
 
     public float findLivingArea(String content) {
-        Pattern pattern = Pattern.compile("(\\d{2,3})\\s{0,10}кв\\.м");
-        Matcher matcher = pattern.matcher(content);
-        while (matcher.find()) {
-            String livingArea = matcher.group(1);
-            float livingAreaF = Float.valueOf(livingArea);
-            return livingAreaF;
-        }
-        return -1.0f;
+        String regex = "(\\d{2,3})\\s{0,10}кв\\.м";
+        return toFloat(regexSearch(regex, 1, content));
     }
 
     public Set<String> getLinks(String result) {
@@ -135,7 +71,10 @@ public class OlxBGMapper implements ApartmentMapper{
         Pattern pattern = Pattern.compile(regex);
         Matcher matcher = pattern.matcher(result);
         while (matcher.find()) {
-            results.add(matcher.group().split(" ")[0].replace("\"", ""));
+            if (!visitedLinks.contains(matcher.group())) {
+                results.add(matcher.group().split(" ")[0].replace("\"", ""));
+                visitedLinks.add(matcher.group());
+            }
         }
 
         return results;
@@ -146,7 +85,7 @@ public class OlxBGMapper implements ApartmentMapper{
     public List<ApartmentInfo> get() {
         String result = null;
         try {
-            result = Request.Get(WOULD_LIVE_IN)
+            result = Request.Get(ALL)
                     .execute().returnContent().asString();
             List<ApartmentInfo> infos = new ArrayList<>();
             Set<String> links = getLinks(result);
@@ -163,6 +102,7 @@ public class OlxBGMapper implements ApartmentMapper{
             e.printStackTrace();
             return new ArrayList<>();
         }
-
     }
+
+
 }

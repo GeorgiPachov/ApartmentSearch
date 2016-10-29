@@ -87,6 +87,37 @@ public class Apartment {
                 '}';
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Apartment apartment = (Apartment) o;
+
+        if (Float.compare(apartment.livingArea, livingArea) != 0) return false;
+        if (floor != apartment.floor) return false;
+        if (centralStateHeating != apartment.centralStateHeating) return false;
+        if (Float.compare(apartment.price, price) != 0) return false;
+        if (year != apartment.year) return false;
+        if (phone != null ? !phone.equals(apartment.phone) : apartment.phone != null) return false;
+        if (link != null ? !link.equals(apartment.link) : apartment.link != null) return false;
+        return locatedIn != null ? locatedIn.equals(apartment.locatedIn) : apartment.locatedIn == null;
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = (livingArea != +0.0f ? Float.floatToIntBits(livingArea) : 0);
+        result = 31 * result + floor;
+        result = 31 * result + (phone != null ? phone.hashCode() : 0);
+        result = 31 * result + (link != null ? link.hashCode() : 0);
+        result = 31 * result + (centralStateHeating ? 1 : 0);
+        result = 31 * result + (price != +0.0f ? Float.floatToIntBits(price) : 0);
+        result = 31 * result + year;
+        result = 31 * result + (locatedIn != null ? locatedIn.hashCode() : 0);
+        return result;
+    }
+
     public enum BuildType {
         BRICK(), EPK(), OTHER();
     }

@@ -16,7 +16,19 @@ public class ImotBGMapper implements ApartmentMapper {
     private static final String ONE_ROOM_ONLY_SEARCH_EVERYWHERE = "http://www.imot.bg/2cg82f";
     private static final String ONE_ROOM_INCLUDED = "http://www.imot.bg/2cg7sd";
     private static final String WOULD_LIVE_IN = "http://www.imot.bg/2czox6";
-    private static final String ALL = "http://www.imot.bg/2d2i6k";
+    private static final String IN_MY_FINANCIAL_RANGE = "http://www.imot.bg/2e212o";
+    private static final String ALL = "http://www.imot.bg/2dr707";
+    private final String searchTerm;
+
+    private Set<String> visitedLinks = new HashSet<>();
+
+    public ImotBGMapper(String arg) {
+        this.searchTerm = arg;
+    }
+
+    public ImotBGMapper() {
+        this.searchTerm = IN_MY_FINANCIAL_RANGE;
+    }
 
     public static void main(String[] args) throws IOException {
         ImotBGMapper mapper = new ImotBGMapper();
@@ -28,7 +40,7 @@ public class ImotBGMapper implements ApartmentMapper {
     public List<ApartmentInfo> get() {
         String result = null;
         try {
-            result = Request.Get(ALL)
+            result = Request.Get(searchTerm)
                     .execute().returnContent().asString();
             List<String> pagesLinks = getPagesLinks(result);
             System.out.print(pagesLinks.size());
@@ -143,6 +155,11 @@ public class ImotBGMapper implements ApartmentMapper {
         return -1;
     }
 
+    @Override
+    public String getURL() {
+        return null;
+    }
+
     public float findPrice(String content) {
         Pattern pattern = Pattern.compile("(\\d{4,5})\\s{0,2}EUR");
         Matcher matcher = pattern.matcher(content);
@@ -171,7 +188,10 @@ public class ImotBGMapper implements ApartmentMapper {
         Pattern pattern = Pattern.compile(regex);
         Matcher matcher = pattern.matcher(result);
         while (matcher.find()) {
-            results.add(matcher.group().split(" ")[0].replace("\"", ""));
+            if (!visitedLinks.contains(matcher.group())) {
+                results.add(matcher.group().split(" ")[0].replace("\"", ""));
+                visitedLinks.add(matcher.group());
+            }
         }
 
 //        http://www.imot.bg/pcgi/imot.cgi?act=5&adv=1b146979309238901&slink=2cbbj1&f1=1
