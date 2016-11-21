@@ -16,7 +16,7 @@ public class ImotBGMapper implements ApartmentMapper {
     private static final String ONE_ROOM_ONLY_SEARCH_EVERYWHERE = "http://www.imot.bg/2cg82f";
     private static final String ONE_ROOM_INCLUDED = "http://www.imot.bg/2cg7sd";
     private static final String WOULD_LIVE_IN = "http://www.imot.bg/2czox6";
-    private static final String IN_MY_FINANCIAL_RANGE = "http://www.imot.bg/2e212o";
+    private static final String IN_MY_FINANCIAL_RANGE = "http://www.imot.bg/2f05tf";
     private static final String ALL = "http://www.imot.bg/2dr707";
     private final String searchTerm;
 
@@ -75,11 +75,13 @@ public class ImotBGMapper implements ApartmentMapper {
 
     private List<String> getPagesLinks(String result) {
 //        http://www.imot.bg/pcgi/imot.cgi?act=3&slink=2d2i6k&f1=2
-        Pattern pattern = Pattern.compile("http://www\\.imot\\.bg/pcgi/imot\\.cgi\\?act=\\d&amp;slink=[a-z0-9]*&amp;f1=\\d");
+        //http://www.imot.bg/pcgi/imot.cgi?act=3&slink=2f05tf&f1=2
+        //href="//www.imot.bg/pcgi/imot.cgi?act=3&slink=2f05tf&f1=2"
+        Pattern pattern = Pattern.compile("www\\.imot\\.bg/pcgi/imot\\.cgi\\?act=\\d&amp;slink=[a-z0-9]*&amp;f1=\\d");
         List<String> resultList = new ArrayList<>();
         Matcher matcher = pattern.matcher(result);
         while (matcher.find()) {
-            resultList.add(matcher.group(0));
+            resultList.add("http://" + matcher.group(0));
         }
         return resultList;
     }
@@ -184,16 +186,16 @@ public class ImotBGMapper implements ApartmentMapper {
 
     public Set<String> getLinks(String result) {
         Set<String> results = new LinkedHashSet<>();
-        String regex = "http://www.imot.bg/pcgi/imot.cgi\\?.*adv=.*\"??";
+        String regex = "www.imot.bg/pcgi/imot.cgi\\?.*adv=.*\"??";
         Pattern pattern = Pattern.compile(regex);
         Matcher matcher = pattern.matcher(result);
         while (matcher.find()) {
             if (!visitedLinks.contains(matcher.group())) {
-                results.add(matcher.group().split(" ")[0].replace("\"", ""));
+                results.add("http://" + matcher.group().split(" ")[0].replace("\"", ""));
                 visitedLinks.add(matcher.group());
             }
         }
-
+//        href="//www.imot.bg/pcgi/imot.cgi?act=5&adv=1b145380499623468&slink=2f05tf&f1=1"
 //        http://www.imot.bg/pcgi/imot.cgi?act=5&adv=1b146979309238901&slink=2cbbj1&f1=1
         return results;
 

@@ -1,6 +1,7 @@
 package com.gpachov.apartmentsearch.mapper;
 
 import com.gpachov.apartmentsearch.ApartmentInfo;
+import com.gpachov.apartmentsearch.Main;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -17,19 +18,20 @@ import static com.gpachov.apartmentsearch.mapper.Utils.regexSearch;
  */
 public class HomesBGMapper implements ApartmentMapper {
     private static final String ALL = "http://www.homes.bg/index.php?go=apartmentssell&search=1&advanced=&fromhomeu=2&publishedTime=0&filterOrderBy=1&showPrice=&Neighbourhoods=&morgagesells=&regiontype=1&locationId=1&offersfrom[1]=1&offersfrom[2]=1&offersfrom[3]=1&apartmenttype[2]=1&apartmenttype[3]=1&priceFrom=0&priceTo=0&currencyId=1&areaFrom=&areaTo=&furnitureId=2&heatingId=0&finished=1&year_builtId=3&constructionstageId=&floorFrom=0&floorTo=0&built_typeId=1";
-
+    private static final String NEOBZAVEDENI ="http://www.homes.bg/index.php?go=apartmentssell&search=1&advanced=&fromhomeu=2&publishedTime=0&filterOrderBy=1&showPrice=&Neighbourhoods=&morgagesells=&regiontype=1&locationId=1&offersfrom%5B1%5D=1&offersfrom%5B2%5D=1&offersfrom%5B3%5D=1&apartmenttype%5B2%5D=1&apartmenttype%5B3%5D=1&priceFrom=0&priceTo=65000&currencyId=1&areaFrom=&areaTo=&furnitureId=3&heatingId=0&finished=1&year_builtId=3&constructionstageId=&floorFrom=0&floorTo=0&built_typeId=1";
     private Set<String> visitedLinks = new HashSet<>();
 
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         HomesBGMapper mapper = new HomesBGMapper();
         List<ApartmentInfo> sortedInfos = mapper.get();
+        Main.mapToHtml(sortedInfos, HomesBGMapper.class.getSimpleName() + ".html");
         sortedInfos.forEach(System.out::println);
     }
 
     @Override
     public String getURL() {
-        return ALL;
+        return NEOBZAVEDENI;
     }
 
     @Override

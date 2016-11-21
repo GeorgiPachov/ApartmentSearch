@@ -48,17 +48,16 @@ public class Main {
         }
         Runtime.getRuntime().exec(command + resultsFile);
     }
-
-    private static String mapToHtml(List<ApartmentInfo> infoFromAllModules) throws IOException {
+    public static String mapToHtml(List<ApartmentInfo> infoFromAllModules, String resFile) throws IOException {
         VelocityEngine ve = new VelocityEngine();
         ve.init();
 
         String template = "<html><head></head> <body>" +
                 "<table>"  +
-                "<tr><td>Jilishtna Plosht (kvadratni metri)</td> <td>Etaj: </td> <td> Cena (v evro)</td> <td> Godina na stroej</td> <td>Kvartal/mestnost v Sofiq</td> <td>Link kum obiavata</td> </tr>" +
+                "<tr><td>Nomer Jilishtna Plosht (kvadratni metri)</td> <td>Etaj: </td> <td> Cena (v evro)</td> <td> Godina na stroej</td> <td>Kvartal/mestnost v Sofiq</td> <td>Link kum obiavata</td> </tr>" +
                 "  #foreach( $a in $aps)" +
                 "    <tr>"  + "" +
-                "<td>$a.livingArea kv.m.</td> <td>$a.floor </td> <td> $a.price</td> <td> $a.year</td> <td>$a.locatedIn</td> <td><a href=\"$a.link\" target=\"_blank\">$a.link</td> </tr> " +
+                "<td>numer</td><td>$a.livingArea kv.m.</td> <td>$a.floor </td> <td> $a.price</td> <td> $a.year</td> <td>$a.locatedIn</td> <td><a href=\"$a.link\" target=\"_blank\">$a.link</td> </tr> " +
                 "  #end" +
                 "   </table></body></html>";
         VelocityContext vc = new VelocityContext();
@@ -67,12 +66,15 @@ public class Main {
             a.setLocatedIn(translate(a.getLocatedIn()));
         }
         apartments = apartments.stream().sorted((c1, c2) -> Float.compare(c1.getPrice(), c2.getPrice())).collect(Collectors.toList());
-        String resultFile = "apartment-report.html";
-        FileWriter fileWriter = new FileWriter(Paths.get(resultFile).toAbsolutePath().toString());
+        FileWriter fileWriter = new FileWriter(Paths.get(resFile).toAbsolutePath().toString());
         vc.put("aps", apartments);
         ve.evaluate(vc, fileWriter, "Writer", template);
 
-        return resultFile;
+        return resFile;
+    }
+    private static String mapToHtml(List<ApartmentInfo> infoFromAllModules) throws IOException {
+        String resultFile = "apartment-report.html";
+        return mapToHtml(infoFromAllModules, resultFile);
     }
 
     private static String translate(String inBulgarian) {
@@ -90,7 +92,7 @@ public class Main {
         translatations.put('в',"v");
         translatations.put('г',"g");
         translatations.put('д',"d");
-        translatations.put('е',"е");
+        translatations.put('е',"e");
         translatations.put('ж',"j");
         translatations.put('з',"z");
         translatations.put('и',"i");
@@ -102,6 +104,8 @@ public class Main {
         translatations.put('о',"o");
         translatations.put('п',"p");
         translatations.put('р',"r");
+        translatations.put('с',"s");
+        translatations.put('т',"t");
         translatations.put('ф',"f");
         translatations.put('у',"u");
         translatations.put('х',"h");
