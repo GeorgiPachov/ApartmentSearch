@@ -17,10 +17,10 @@ import static com.gpachov.apartmentsearch.mapper.Utils.regexSearch;
  * Created by georgi.pachov on 01/10/2016.
  */
 public class HomesBGMapper implements ApartmentMapper {
-    private static final String ALL = "http://www.homes.bg/index.php?go=apartmentssell&search=1&advanced=&fromhomeu=2&publishedTime=0&filterOrderBy=1&showPrice=&Neighbourhoods=&morgagesells=&regiontype=1&locationId=1&offersfrom[1]=1&offersfrom[2]=1&offersfrom[3]=1&apartmenttype[2]=1&apartmenttype[3]=1&priceFrom=0&priceTo=0&currencyId=1&areaFrom=&areaTo=&furnitureId=2&heatingId=0&finished=1&year_builtId=3&constructionstageId=&floorFrom=0&floorTo=0&built_typeId=1";
-    private static final String NEOBZAVEDENI ="http://www.homes.bg/index.php?go=apartmentssell&search=1&advanced=&fromhomeu=2&publishedTime=0&filterOrderBy=1&showPrice=&Neighbourhoods=&morgagesells=&regiontype=1&locationId=1&offersfrom%5B1%5D=1&offersfrom%5B2%5D=1&offersfrom%5B3%5D=1&apartmenttype%5B2%5D=1&apartmenttype%5B3%5D=1&priceFrom=0&priceTo=65000&currencyId=1&areaFrom=&areaTo=&furnitureId=3&heatingId=0&finished=1&year_builtId=3&constructionstageId=&floorFrom=0&floorTo=0&built_typeId=1";
+    private static final String UNFURNITURED_PANEL_NEW ="http://www.homes.bg/index.php?go=apartmentssell&search=1&advanced=&fromhomeu=2&publishedTime=0&filterOrderBy=1&showPrice=&Neighbourhoods=&morgagesells=&regiontype=1&locationId=1&offersfrom%5B1%5D=1&offersfrom%5B2%5D=1&offersfrom%5B3%5D=1&apartmenttype%5B2%5D=1&apartmenttype%5B3%5D=1&priceFrom=0&priceTo=65000&currencyId=1&areaFrom=&areaTo=&furnitureId=3&heatingId=0&finished=1&year_builtId=3&constructionstageId=&floorFrom=0&floorTo=0&built_typeId=";
+    private static final String FURNITURED = "http://www.homes.bg/index.php?go=apartmentssell&search=1&advanced=&fromhomeu=2&publishedTime=0&filterOrderBy=1&showPrice=&Neighbourhoods=&morgagesells=&regiontype=1&locationId=1&offersfrom%5B1%5D=1&offersfrom%5B2%5D=1&offersfrom%5B3%5D=1&apartmenttype%5B2%5D=1&apartmenttype%5B3%5D=1&priceFrom=0&priceTo=65000&currencyId=1&areaFrom=&areaTo=&furnitureId=2&heatingId=0&finished=1&year_builtId=3&constructionstageId=&floorFrom=0&floorTo=0&built_typeId=1";
+    private static final String UNFURNITURED ="http://www.homes.bg/index.php?go=apartmentssell&search=1&advanced=&fromhomeu=2&publishedTime=0&filterOrderBy=1&showPrice=&Neighbourhoods=&morgagesells=&regiontype=1&locationId=1&offersfrom%5B1%5D=1&offersfrom%5B2%5D=1&offersfrom%5B3%5D=1&apartmenttype%5B2%5D=1&apartmenttype%5B3%5D=1&priceFrom=0&priceTo=65000&currencyId=1&areaFrom=&areaTo=&furnitureId=3&heatingId=0&finished=1&year_builtId=3&constructionstageId=&floorFrom=0&floorTo=0&built_typeId=1";
     private Set<String> visitedLinks = new HashSet<>();
-
 
     public static void main(String[] args) throws IOException {
         HomesBGMapper mapper = new HomesBGMapper();
@@ -30,13 +30,28 @@ public class HomesBGMapper implements ApartmentMapper {
     }
 
     @Override
-    public String getURL() {
-        return NEOBZAVEDENI;
+    public String getUnfurnituredPanel() {
+        return UNFURNITURED_PANEL_NEW;
+    }
+
+    @Override
+    public String getFurnituredUrl() {
+        return FURNITURED;
+    }
+
+    @Override
+    public String getUnfurnituredUrl() {
+        return UNFURNITURED;
     }
 
     @Override
     public float findPrice(String content) {
         return toFloat(regexSearch("<strong>(\\d{1,3},\\d{1,3}) </strong></span> EUR", 1, content).replaceAll(",",""));
+    }
+
+    @Override
+    public boolean findIsLastFloor(String content) {
+        return false;
     }
 
     @Override
@@ -77,7 +92,7 @@ public class HomesBGMapper implements ApartmentMapper {
     @Override
     public List<ApartmentInfo> get() {
         try {
-            Set<String> pages = getPageLinks(Utils.getContentUtf8(ALL));
+            Set<String> pages = getPageLinks(Utils.getContentUtf8(getURL()));
             List<ApartmentInfo> results = new ArrayList<>();
             for (String pageLink : pages) {
                 results.addAll(ApartmentMapper.super.doGet(pageLink));

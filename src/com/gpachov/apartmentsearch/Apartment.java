@@ -9,6 +9,7 @@ public class Apartment {
     private float price;
     private int year;
     private String locatedIn;
+    private boolean isLastFloor;
 
     public boolean isCentralStateHeating() {
         return centralStateHeating;
@@ -117,6 +118,15 @@ public class Apartment {
         result = 31 * result + (locatedIn != null ? locatedIn.hashCode() : 0);
         return result;
     }
+
+    public void setIsLastFloor(boolean isLastFloor) {
+        this.isLastFloor = isLastFloor;
+    }
+
+    public boolean isLastFloor() {
+        return isLastFloor;
+    }
+
 
     public enum BuildType {
         BRICK(), EPK(), OTHER();

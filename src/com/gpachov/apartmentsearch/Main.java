@@ -10,6 +10,7 @@ import org.apache.velocity.app.VelocityEngine;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.StringWriter;
+import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Collector;
@@ -52,24 +53,33 @@ public class Main {
         VelocityEngine ve = new VelocityEngine();
         ve.init();
 
-        String template = "<html><head></head> <body>" +
-                "<table>"  +
-                "<tr><td>Nomer Jilishtna Plosht (kvadratni metri)</td> <td>Etaj: </td> <td> Cena (v evro)</td> <td> Godina na stroej</td> <td>Kvartal/mestnost v Sofiq</td> <td>Link kum obiavata</td> </tr>" +
-                "  #foreach( $a in $aps)" +
-                "    <tr>"  + "" +
-                "<td>numer</td><td>$a.livingArea kv.m.</td> <td>$a.floor </td> <td> $a.price</td> <td> $a.year</td> <td>$a.locatedIn</td> <td><a href=\"$a.link\" target=\"_blank\">$a.link</td> </tr> " +
-                "  #end" +
-                "   </table></body></html>";
-        VelocityContext vc = new VelocityContext();
-        List<Apartment> apartments = infoFromAllModules.stream().map(i -> i.getApartment()).collect(Collectors.toList());
-        for (Apartment a : apartments) {
-            a.setLocatedIn(translate(a.getLocatedIn()));
-        }
-        apartments = apartments.stream().sorted((c1, c2) -> Float.compare(c1.getPrice(), c2.getPrice())).collect(Collectors.toList());
-        FileWriter fileWriter = new FileWriter(Paths.get(resFile).toAbsolutePath().toString());
-        vc.put("aps", apartments);
-        ve.evaluate(vc, fileWriter, "Writer", template);
+        String header = "<html><head></head> <body>" +
+                "<table>" + "<tr><td>Nomer </td> <td> Rezultat </td> <td> Jilishtna Plosht (kvadratni metri)</td> <td>Etaj: </td> <td> Cena (v evro)</td> <td> Godina na stroej</td> <td>Kvartal/mestnost v Sofiq</td> <td>Link kum obiavata</td> </tr>";
+        StringBuilder middle = new StringBuilder();
+        String footer = "   </table></body></html>";
 
+        List<ApartmentInfo> apartments = infoFromAllModules.stream().collect(Collectors.toList());
+        for (ApartmentInfo a : apartments) {
+            a.getApartment().setLocatedIn(translate(a.getApartment().getLocatedIn()));
+        }
+//        apartments = apartments.stream().sorted((c1, c2) ->
+//                -1* Float.compare(c1.getFormulaScore(), c2.getFormulaScore())).collect(Collectors.toList());
+        apartments = apartments.stream().sorted((c1, c2) ->
+                -1* Float.compare(c1.getLocationScore(), c2.getLocationScore())).collect(Collectors.toList());
+
+        for (int i = 0; i < apartments.size(); i++) {
+            ApartmentInfo info = apartments.get(i);
+            Apartment a = apartments.get(i).getApartment();
+            middle.append(
+                    "<tr><td>" + i + "</td><td>" + info.getFormulaScore() + "</td>" + "<td>" + a.getLivingArea() + "kv.m.</td> " +
+                    "<td>" + a.getFloor() +" </td> <td> " + a.getPrice() + "EUR</td> <td> " + a.getYear() + "</td>" +
+                    "<td>" + a.getLocatedIn() +"</td> <td><a href=\"" + a.getLink() + "\" target=\"_blank\">" + a.getLink() +"</td> </tr> ");
+
+        }
+        Files.delete(Paths.get(resFile));
+        FileWriter fileWriter = new FileWriter(Paths.get(resFile).toAbsolutePath().toString());
+        fileWriter.write(header + middle + footer);
+        fileWriter.flush();
         return resFile;
     }
     private static String mapToHtml(List<ApartmentInfo> infoFromAllModules) throws IOException {
@@ -110,7 +120,7 @@ public class Main {
         translatations.put('у',"u");
         translatations.put('х',"h");
         translatations.put('ц',"c");
-        translatations.put('ч',"4");
+        translatations.put('ч',"ch");
         translatations.put('с',"s");
         translatations.put('ш',"sh");
         translatations.put('щ',"sht");

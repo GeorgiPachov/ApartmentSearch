@@ -1,7 +1,9 @@
 package com.gpachov.apartmentsearch.mapper;
 
+import com.gpachov.Mapper;
 import com.gpachov.apartmentsearch.Apartment;
 import com.gpachov.apartmentsearch.ApartmentInfo;
+import com.gpachov.apartmentsearch.Constants;
 import org.apache.http.client.fluent.Request;
 
 import java.io.IOException;
@@ -13,11 +15,28 @@ import java.util.stream.Collectors;
 
 import static com.gpachov.apartmentsearch.mapper.Utils.getContentUtf8;
 
-/**
- * Created by georgi.pachov on 27/09/2016.
- */
-public interface ApartmentMapper {
-    String getURL();
+public interface ApartmentMapper extends Mapper {
+    @Override
+    default String getURL() {
+        switch (Constants.searchPolicy) {
+            case NEOBZAVEDENI:
+                return getUnfurnituredUrl();
+            case OBZAVEDEN:
+                return getFurnituredUrl();
+            case NEOBZAVEDENI_PANEL_NOV:
+                return getUnfurnituredPanel();
+            default:
+                return getFurnituredUrl();
+
+        }
+    }
+
+    String getUnfurnituredPanel();
+
+    String getFurnituredUrl();
+
+    String getUnfurnituredUrl();
+
     float findPrice(String content);
     default ApartmentInfo process(String link) throws IOException {
         String content = getContentUtf8(link);
@@ -41,11 +60,17 @@ public interface ApartmentMapper {
         int year = findYear(content);
         apartment.setYear(year);
 
+        boolean isLastFloor = findIsLastFloor(content);
+        apartment.setIsLastFloor(isLastFloor);
+
         String locatedIn = findLocatedIn(content);
         apartment.setLocatedIn(locatedIn);
 
         return apartment;
     }
+
+    boolean findIsLastFloor(String content);
+
     String findLocatedIn(String content);
     int findYear(String content);
     int findFloor(String content);

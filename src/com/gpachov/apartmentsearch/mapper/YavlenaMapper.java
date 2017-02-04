@@ -21,6 +21,21 @@ public class YavlenaMapper implements ApartmentMapper {
     }
 
     @Override
+    public String getUnfurnituredPanel() {
+        return null;
+    }
+
+    @Override
+    public String getFurnituredUrl() {
+        return null;
+    }
+
+    @Override
+    public String getUnfurnituredUrl() {
+        return null;
+    }
+
+    @Override
     public float findPrice(String content) {
         return 0;
     }
@@ -33,6 +48,11 @@ public class YavlenaMapper implements ApartmentMapper {
     @Override
     public Apartment mapToApartment(String content) {
         return null;
+    }
+
+    @Override
+    public boolean findIsLastFloor(String content) {
+        return false;
     }
 
     @Override

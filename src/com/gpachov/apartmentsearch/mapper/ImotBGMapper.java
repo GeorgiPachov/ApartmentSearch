@@ -17,7 +17,10 @@ public class ImotBGMapper implements ApartmentMapper {
     private static final String ONE_ROOM_INCLUDED = "http://www.imot.bg/2cg7sd";
     private static final String WOULD_LIVE_IN = "http://www.imot.bg/2czox6";
     private static final String IN_MY_FINANCIAL_RANGE = "http://www.imot.bg/2f05tf";
-    private static final String ALL = "http://www.imot.bg/2dr707";
+    private static final String NEOBZAVEDEN_PANEL_NEW = "http://www.imot.bg/2f6nvs";
+    private static final String NEOBZAVEDENI_IN_MY_FINANCIAL_RANGE = "http://www.imot.bg/2f2uxm";
+    private static final String FURNITURED = "http://www.imot.bg/2f6pzp";
+    private static final String LINK = FURNITURED;
     private final String searchTerm;
 
     private Set<String> visitedLinks = new HashSet<>();
@@ -27,7 +30,7 @@ public class ImotBGMapper implements ApartmentMapper {
     }
 
     public ImotBGMapper() {
-        this.searchTerm = IN_MY_FINANCIAL_RANGE;
+        this.searchTerm = getURL();
     }
 
     public static void main(String[] args) throws IOException {
@@ -95,24 +98,9 @@ public class ImotBGMapper implements ApartmentMapper {
         return info;
     }
 
-    public Apartment mapToApartment(String content) {
-        Apartment apartment = new Apartment();
-        float livingArea = findLivingArea(content);
-        apartment.setLivingArea(livingArea);
-
-        float price = findPrice(content);
-        apartment.setPrice(price);
-
-        int floor = findFloor(content);
-        apartment.setFloor(floor);
-
-        int year = findYear(content);
-        apartment.setYear(year);
-
-        String locatedIn = findLocatedIn(content);
-        apartment.setLocatedIn(locatedIn);
-
-        return apartment;
+    @Override
+    public boolean findIsLastFloor(String content) {
+        return false;
     }
 
     public String findLocatedIn(String content) {
@@ -158,8 +146,18 @@ public class ImotBGMapper implements ApartmentMapper {
     }
 
     @Override
-    public String getURL() {
-        return null;
+    public String getUnfurnituredPanel() {
+        return NEOBZAVEDEN_PANEL_NEW;
+    }
+
+    @Override
+    public String getFurnituredUrl() {
+        return FURNITURED;
+    }
+
+    @Override
+    public String getUnfurnituredUrl() {
+        return NEOBZAVEDENI_IN_MY_FINANCIAL_RANGE;
     }
 
     public float findPrice(String content) {

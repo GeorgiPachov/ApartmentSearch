@@ -24,15 +24,17 @@ public class ApartmentInfo {
             locationScores.put("лозенец", 1.0f);
             locationScores.put("дианабад", 1.0f);
             locationScores.put("редута", 0.65f);
-            locationScores.put("дружба", 0.6f);
-            locationScores.put("дружба 1", 0.6f);
+            locationScores.put("дружба", 0.8f);
+            locationScores.put("дружба 1", 0.8f);
+            locationScores.put("дружба 2", 0.8f);
             locationScores.put("оборище", 0.8f);
             locationScores.put("слатина", 0.7f);
-            locationScores.put("витоша", 0.85f);
+            locationScores.put("витоша", 0.95f);
             locationScores.put("мусагеница", 0.8f);
             locationScores.put("дървеница", 0.7f);
-            locationScores.put("младост 1", 0.65f);
-            locationScores.put("младост 2", 0.6f);
+            locationScores.put("младост 1", 0.9f);
+            locationScores.put("младост 2", 0.8f);
+            locationScores.put("младост 3", 0.9f);
             locationScores.put("полигона", 0.6f);
             locationScores.put("гео милев", 0.7f);
             locationScores.put("изток", 1.0f);
@@ -76,7 +78,7 @@ public class ApartmentInfo {
             locationScores.put("модерно предградие", 0.45f);
             locationScores.put("симеоново", 0.3f);
             locationScores.put("свобода", 0.45f);
-            locationScores.put("световрачене", 0.2f);
+            locationScores.put("световрачене", 0.01f);
             locationScores.put("толстой", 0.8f);
             locationScores.put("хаджи димитър", 0.75f);
             locationScores.put("левски", 0.5f);
@@ -110,7 +112,6 @@ public class ApartmentInfo {
     private float priceCoefficient;
     private float locationScore;
 
-
     public ApartmentInfo(Apartment apartment) {
         this.apartment = apartment;
         this.pricePerSqM = apartment.getPrice() / apartment.getLivingArea();
@@ -137,10 +138,9 @@ public class ApartmentInfo {
         } else {
             setLocationScore(locationScore);
         }
-        float formulaScore = (pricePerSqmNormalized + floorCoefficient + yearCoefficient + priceCoefficient + this.locationScore) / 5.0f;
+        float formulaScore = (3*pricePerSqmNormalized + floorCoefficient + /*yearCoefficient*/ + 2*priceCoefficient + 3*this.locationScore) / 9.0f;
 
         setFormulaScore(formulaScore);
-
     }
 
     public float getPricePerSqM() {
@@ -205,7 +205,6 @@ public class ApartmentInfo {
     public void setLocationScore(float locationScore) {
         this.locationScore = locationScore;
     }
-
 
     public Apartment getApartment() {
         return apartment;
