@@ -7,15 +7,22 @@ public class JobInfo {
     private String salary;
     private String position;
 
-    public JobInfo(List<String> technologies, String salary, String position, String company) {
-        this.technologies = technologies;
-        this.salary = salary;
-        this.position = position;
-        this.company = company;
+    @Override
+    public String toString() {
+        return "JobInfo{" +
+                "position='" + position + '\'' +
+                ", link='" + link + '\'' +
+                ", company='" + company + '\'' +
+                '}';
+    }
+
+    private String link;
+    private String company;
+
+    public JobInfo() {
     }
 
     public List<String> getTechnologies() {
-
         return technologies;
     }
 
@@ -47,5 +54,8 @@ public class JobInfo {
         this.company = company;
     }
 
-    private String company;
+
+    public void setLink(String link) {
+        this.link = link;
+    }
 }
