@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
  */
 public class JobsBgJobMapper implements JobMapper {
 
-    private static final String JOBS_BG_TEAM_LEAD_SEARCH = "https://www.jobs.bg/front_job_search.php?first_search=1&distance=0&location_sid=&all_categories=0&all_type=0&position_level%5B%5D=1&position_level%5B%5D=3&keywords%5B%5D=Java&keyword=";
+    private static final String JOBS_BG_TEAM_LEAD_SEARCH = "https://www.jobs.bg/front_job_search.php?first_search=1&distance=0&location_siМd=&all_categories=0&all_type=0&position_level%5B%5D=1&position_level%5B%5D=3&keywords%5B%5D=Java&keyword=";
 
     @Override
     public String getURL() {

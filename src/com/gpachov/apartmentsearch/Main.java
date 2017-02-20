@@ -23,15 +23,21 @@ public class Main {
 
     public static void main(String[] args) throws IOException {
         List<ApartmentMapper> mappers = new ArrayList<>();
-        ImotBGMapper e = null;
+        ImotBGMapper imotBgMapper = null;
+        OlxBGMapper olxBGMapper = null;
+        HomesBGMapper homesBGMapper = null;
         if (args.length > 0){
-            e = new ImotBGMapper(args[0]);
+            imotBgMapper = new ImotBGMapper(args[0]);
+            olxBGMapper = new OlxBGMapper(args[1]);
+            homesBGMapper = new HomesBGMapper(args[2]);
         } else {
-            e = new ImotBGMapper();
+            imotBgMapper = new ImotBGMapper();
+            olxBGMapper = new OlxBGMapper();
+            homesBGMapper = new HomesBGMapper();
         }
-        mappers.add(e);
-        mappers.add(new OlxBGMapper());
-        mappers.add(new HomesBGMapper());
+        mappers.add(imotBgMapper);
+        mappers.add(olxBGMapper);
+        mappers.add(homesBGMapper);
 
         List<ApartmentInfo> infoFromAllModules = mappers.stream().map(m -> m.get()).flatMap(l -> l.stream()).sorted(Comparator.comparingDouble(apartmentInfo -> apartmentInfo.getFormulaScore() * -1)).collect(Collectors.toList());
 
