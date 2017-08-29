@@ -10,7 +10,9 @@ public class JobInfo {
     @Override
     public String toString() {
         return "JobInfo{" +
-                "position='" + position + '\'' +
+                "technologies=" + technologies +
+                ", salary='" + salary + '\'' +
+                ", position='" + position + '\'' +
                 ", link='" + link + '\'' +
                 ", company='" + company + '\'' +
                 '}';
@@ -54,6 +56,10 @@ public class JobInfo {
         this.company = company;
     }
 
+
+    public String getLink() {
+        return link;
+    }
 
     public void setLink(String link) {
         this.link = link;

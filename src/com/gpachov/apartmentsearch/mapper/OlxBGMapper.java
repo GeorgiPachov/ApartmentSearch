@@ -2,6 +2,7 @@
 
 package com.gpachov.apartmentsearch.mapper;
 
+import com.gpachov.CommonUtils;
 import com.gpachov.apartmentsearch.ApartmentInfo;
 import com.gpachov.apartmentsearch.Main;
 import org.apache.http.client.fluent.Request;
@@ -40,7 +41,7 @@ public class OlxBGMapper implements ApartmentMapper {
     public static void main(String[] args) throws IOException {
         OlxBGMapper mapper = new OlxBGMapper();
         List<ApartmentInfo> sortedInfos = mapper.get();
-        Main.mapToHtml(sortedInfos, OlxBGMapper.class
+        CommonUtils.mapApartmentsToHtml(sortedInfos, OlxBGMapper.class
                 .getSimpleName() + ".html");
         sortedInfos.forEach(System.out::println);
 

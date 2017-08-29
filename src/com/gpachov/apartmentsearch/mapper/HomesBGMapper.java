@@ -1,5 +1,6 @@
 package com.gpachov.apartmentsearch.mapper;
 
+import com.gpachov.CommonUtils;
 import com.gpachov.apartmentsearch.ApartmentInfo;
 import com.gpachov.apartmentsearch.Main;
 
@@ -18,7 +19,8 @@ import static com.gpachov.apartmentsearch.mapper.Utils.regexSearch;
  */
 public class HomesBGMapper implements ApartmentMapper {
     private static final String UNFURNITURED_PANEL_NEW ="http://www.homes.bg/index.php?go=apartmentssell&search=1&advanced=&fromhomeu=2&publishedTime=0&filterOrderBy=1&showPrice=&Neighbourhoods=&morgagesells=&regiontype=1&locationId=1&offersfrom%5B1%5D=1&offersfrom%5B2%5D=1&offersfrom%5B3%5D=1&apartmenttype%5B2%5D=1&apartmenttype%5B3%5D=1&priceFrom=0&priceTo=65000&currencyId=1&areaFrom=&areaTo=&furnitureId=3&heatingId=0&finished=1&year_builtId=3&constructionstageId=&floorFrom=0&floorTo=0&built_typeId=";
-    private static final String FURNITURED = "http://www.homes.bg/index.php?go=apartmentssell&search=1&advanced=&fromhomeu=2&publishedTime=0&filterOrderBy=1&showPrice=&Neighbourhoods=&morgagesells=&regiontype=1&locationId=1&offersfrom%5B1%5D=1&offersfrom%5B2%5D=1&offersfrom%5B3%5D=1&apartmenttype%5B2%5D=1&apartmenttype%5B3%5D=1&priceFrom=0&priceTo=65000&currencyId=1&areaFrom=&areaTo=&furnitureId=2&heatingId=0&finished=1&year_builtId=3&constructionstageId=&floorFrom=0&floorTo=0&built_typeId=1";
+//    private static final String FURNITURED = "http://www.homes.bg/index.php?go=apartmentssell&search=1&advanced=&fromhomeu=2&publishedTime=0&filterOrderBy=1&showPrice=&Neighbourhoods=&morgagesells=&regiontype=1&locationId=1&offersfrom%5B1%5D=1&offersfrom%5B2%5D=1&offersfrom%5B3%5D=1&apartmenttype%5B2%5D=1&apartmenttype%5B3%5D=1&priceFrom=0&priceTo=65000&currencyId=1&areaFrom=&areaTo=&furnitureId=2&heatingId=0&finished=1&year_builtId=3&constructionstageId=&floorFrom=0&floorTo=0&built_typeId=1";
+    private static final String FURNITURED = "http://www.homes.bg/index.php?go=apartmentssell&search=1&advanced=&fromhomeu=1&publishedTime=0&filterOrderBy=1&showPrice=&Neighbourhoods=451%2C450%2C452%2C453%2C454%2C455%2C456%2C457%2C458%2C459%2C460&morgagesells=&regiontype=1&locationId=1&offersfrom%5B1%5D=1&offersfrom%5B2%5D=1&offersfrom%5B3%5D=1&apartmenttype%5B1%5D=1&apartmenttype%5B2%5D=1&apartmenttype%5B3%5D=1&apartmenttype%5B4%5D=1&apartmenttype%5B5%5D=1&finished=1&area=100&price=&currencyId=1";
     private static final String UNFURNITURED ="http://www.homes.bg/index.php?go=apartmentssell&search=1&advanced=&fromhomeu=2&publishedTime=0&filterOrderBy=1&showPrice=&Neighbourhoods=&morgagesells=&regiontype=1&locationId=1&offersfrom%5B1%5D=1&offersfrom%5B2%5D=1&offersfrom%5B3%5D=1&apartmenttype%5B2%5D=1&apartmenttype%5B3%5D=1&priceFrom=0&priceTo=65000&currencyId=1&areaFrom=&areaTo=&furnitureId=3&heatingId=0&finished=1&year_builtId=3&constructionstageId=&floorFrom=0&floorTo=0&built_typeId=1";
     private String link;
     private Set<String> visitedLinks = new HashSet<>();
@@ -34,7 +36,7 @@ public class HomesBGMapper implements ApartmentMapper {
     public static void main(String[] args) throws IOException {
         HomesBGMapper mapper = new HomesBGMapper();
         List<ApartmentInfo> sortedInfos = mapper.get();
-        Main.mapToHtml(sortedInfos, HomesBGMapper.class.getSimpleName() + ".html");
+        CommonUtils.mapApartmentsToHtml(sortedInfos, HomesBGMapper.class.getSimpleName() + ".html");
         sortedInfos.forEach(System.out::println);
     }
 
